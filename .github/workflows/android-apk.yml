@@ -1,0 +1,59 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    env:
+      HUSKY: 0
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          ref: v1.16.4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.4 --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build offline web app
+        run: pnpm build:offline
+
+      - name: Add Capacitor Android
+        run: |
+          pnpm add -D @capacitor/cli
+          pnpm add @capacitor/core @capacitor/android
+          pnpm exec cap init "夜雀助手" "cc.izakaya.assistant" --web-dir out
+          pnpm exec cap add android
+          pnpm exec cap sync android
+
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: mystia-assistant-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
