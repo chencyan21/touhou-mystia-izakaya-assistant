@@ -31,7 +31,7 @@ export const getExtendConfig = (cdnUrl: string) =>
 			'main-content': 'calc(var(--safe-h-dvh) - 8rem)',
 			'main-content-pb-0': 'calc(var(--safe-h-dvh) - 6rem)',
 		},
-		padding: { titlebar: 'env(titlebar-area-height,0rem)' },
+		padding: { titlebar: 'var(--safe-app-top-inset)' },
 		screens: { '3xl': '1920px', '4xl': '2560px' },
 		width: { loading: '120px' },
 		zIndex: { 60: '60' },

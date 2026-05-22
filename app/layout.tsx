@@ -116,7 +116,8 @@ export default function RootLayout({ children }: PropsWithChildren<IProps>) {
 				notoSans.variable,
 				notoSansMono.variable,
 				notoSansSC.variable,
-				'selection-custom light:izakaya dark:izakaya-dark'
+				'selection-custom light:izakaya dark:izakaya-dark',
+				{ 'app-safe-area-fallback': isOffline }
 			)}
 		>
 			<head>

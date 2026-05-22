@@ -49,8 +49,20 @@
 }
 
 :root {
+	--safe-app-top-inset: calc(
+		env(titlebar-area-height, 0px) + env(safe-area-inset-top, 0px)
+	);
 	--safe-h-dvh: 100vh;
 	--safe-h-dvh-half: 50vh;
+}
+
+@media (max-width: 767px) {
+	.app-safe-area-fallback {
+		--safe-app-top-inset: calc(
+			env(titlebar-area-height, 0px) +
+				max(env(safe-area-inset-top, 0px), 2rem)
+		);
+	}
 }
 
 @supports (height: 100dvh) {
