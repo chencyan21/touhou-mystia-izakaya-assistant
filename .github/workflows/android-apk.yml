@@ -1,7 +1,13 @@
 name: Build Android APK
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -13,8 +19,6 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v6
-        with:
-          ref: main
 
       - name: Setup Node
         uses: actions/setup-node@v4
