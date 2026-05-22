@@ -11,7 +11,10 @@ import PACKAGE from '../package.json';
 nextEnv.loadEnvConfig(cwd());
 
 const isOffline = Boolean(process.env.OFFLINE);
-const { prepare: isPrepare } = minimist<{ prepare?: boolean }>(argv.slice(2));
+const { prepare: isPrepare, zip: shouldZip = true } = minimist<{
+	prepare?: boolean;
+	zip?: boolean;
+}>(argv.slice(2));
 
 const filesToDelete = [
 	'registerServiceWorker.js',
@@ -72,27 +75,29 @@ if (isOffline && !isPrepare) {
 		);
 	}
 
-	const zipFileName = `${PACKAGE.name}_${PACKAGE.version}_${await getSha()}_offline-Windows`;
-	const zipTemplateFileName = 'offline-template';
+	if (shouldZip) {
+		const zipFileName = `${PACKAGE.name}_${PACKAGE.version}_${await getSha()}_offline-Windows`;
+		const zipTemplateFileName = 'offline-template';
 
-	const templateZip = new AdmZip(
-		resolve(scriptPath, `${zipTemplateFileName}.zip`)
-	);
-	const zip = new AdmZip();
+		const templateZip = new AdmZip(
+			resolve(scriptPath, `${zipTemplateFileName}.zip`)
+		);
+		const zip = new AdmZip();
 
-	templateZip.getEntries().forEach((entry) => {
-		const { entryName } = entry;
-		if (entryName.startsWith(`${zipTemplateFileName}/`)) {
-			const newEntryName = entryName.replace(
-				zipTemplateFileName,
-				zipFileName
-			);
-			zip.addFile(newEntryName, entry.getData());
-		} else {
-			zip.addFile(entryName, entry.getData());
-		}
-	});
+		templateZip.getEntries().forEach((entry) => {
+			const { entryName } = entry;
+			if (entryName.startsWith(`${zipTemplateFileName}/`)) {
+				const newEntryName = entryName.replace(
+					zipTemplateFileName,
+					zipFileName
+				);
+				zip.addFile(newEntryName, entry.getData());
+			} else {
+				zip.addFile(entryName, entry.getData());
+			}
+		});
 
-	zip.addLocalFolder(outputPath, `${zipFileName}/out/`);
-	zip.writeZip(resolve(rootPath, `${zipFileName}.zip`));
+		zip.addLocalFolder(outputPath, `${zipFileName}/out/`);
+		zip.writeZip(resolve(rootPath, `${zipFileName}.zip`));
+	}
 }

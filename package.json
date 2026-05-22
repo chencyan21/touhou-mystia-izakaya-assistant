@@ -8,6 +8,7 @@
 		"dev": "next dev --turbopack",
 		"build": "tsx scripts/generateServiceWorker.ts && next build && tsx scripts/babelTransformFile.ts",
 		"build:offline": "cross-env-shell OFFLINE=true \"tsx scripts/generateOfflineZip.ts --prepare && next build && tsx scripts/babelTransformFile.ts && tsx scripts/generateOfflineZip.ts\"",
+		"build:android": "cross-env-shell OFFLINE=true \"tsx scripts/generateOfflineZip.ts --prepare && next build && tsx scripts/generateOfflineZip.ts --no-zip\"",
 		"sprites": "tsx scripts/generateSprites.ts",
 		"start": "next start",
 		"serve": "pnpx serve out",
